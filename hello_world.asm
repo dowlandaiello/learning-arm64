@@ -1,6 +1,6 @@
-	.global _start
-	.text
-_start:
+	.global main
+	.section text
+main:
 	// STDOUT uses fd 1
 	mov 	x0, #1
 	ldr	x1, msg
