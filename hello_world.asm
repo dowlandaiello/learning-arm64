@@ -11,7 +11,7 @@ _start:
 	// STDOUT uses fd 1
 	mov 	x0, #1
 	ldr	x1, =msg
-	ldr	x2, =m_len
+	ldr	x2, =len
 
 	// write syscall is #64
 	mov	x8, #64
