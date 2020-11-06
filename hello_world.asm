@@ -1,6 +1,7 @@
-	.global main
-	.section text
-main:
+	.global _start
+	.text
+
+_start:
 	// STDOUT uses fd 1
 	mov 	x0, #1
 	ldr	x1, msg
@@ -17,7 +18,7 @@ main:
 	mov	x0, #0
 	svc	#0
 
-
 	.data
+
 msg: .ascii "Hello, World!\n"
 m_len = . - msg
