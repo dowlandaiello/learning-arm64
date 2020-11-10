@@ -4,11 +4,9 @@ prompt:
 	.ascii	"> "
 len = . - prompt
 
-.bss
-
 in:
 	/* Allow 80 chars to be inputted per line */
-	.skip	80
+	.skip	80, '\0'
 
 .text
 
@@ -28,11 +26,23 @@ _start:
 	svc	#0
 
 read_input:
-	/* Get a char */
+	/* Get up to 80 chars */
 	mov	x8, #63
 	mov	x0, #0
-	mov	x1, [in]
+	mov	x1, in
 	mov	x2, #79
 	svc	#0
 
-	ret	_start
+	bl echo_input
+
+	ret
+
+echo_input:
+	/* Print the input */
+	mov	x8, #64
+	mov	x0, #1
+	ldr	x1, =in
+	ldr	x2, 80
+	svc	#0
+
+	ret
