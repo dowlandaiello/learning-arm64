@@ -35,9 +35,9 @@ read_input:
 	mov	x2, #79
 	svc	#0
 
-	bl echo_input
+	bl	echo_input
 
-	bl _start
+	b 	_start
 
 echo_input:
 	/* Print the input */
@@ -46,5 +46,23 @@ echo_input:
 	ldr	x1, =in
 	mov	x2, #80
 	svc	#0
+
+	/* Clear out all chars in input by starting i (x9) at char 0 */
+	mov	x9, #0
+	ldr	x10, =in
+	b	clear_input
+
+	ret
+
+clear_input:
+	/* On each iteration, i++, but stop at i = 80 */
+	cmp	x9, #79
+
+	/* Clear the char at index i */
+	str	xzr, [x10, x9]
+	add	x9, x9, #1
+
+	/* Keep going if the current index is < 79 */
+	blt	clear_input
 
 	ret
