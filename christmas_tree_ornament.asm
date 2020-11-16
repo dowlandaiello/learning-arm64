@@ -15,20 +15,20 @@ _start:
 
 enable_led_group:
 	/* Set GPIO pins 2,3,4 to outputs */
-	mov	r1, 1 << 6 | 1 << 9 | 1 << 12
+	mov	r1, #(1 << 6 | 1 << 9 | 1 << 12)
 
 	/* Commit */
 	ldr	r2, =0x20200000 
 	str	r1, [r2]
 
 	/* Set GPIO pins 14, 15 to outputs */
-	mov	r1, 1 << 12 | 1 << 15
+	mov	r1, #(1 << 12 | 1 << 15)
 
 	/* Commit */
 	ldr	r2, =0x20200004
 	str	r1, [r2]
 
-	ret
+	bx	lr
 
 light_loop:
 	bl	light_led_group
@@ -47,19 +47,20 @@ calc_next_group:
 	sub	r1, r2, r1
 
 	/* r0 + 420 */
-	add	r0, r0, #420
+	add	r2, r0, #420
 
 	/* r0 * (r0 % 69) */
-	mul	r0, r0, r1
+	mul	r0, r2, r1
 
-	ret
+	bx	lr
 
 light_led_group:
-	movlt	r1, 0x20200004, r0, #3
-	movgt	r1, 0x20200020, r0, #2
+	cmp	r0, #3
+	ldrlt	r1, =0x20200004
+	ldrge	r1, =0x20200020
 
 	/* Translate GPIO pins 14 + 15 to 5,6 */
-	addgt	r0, #2, 9
+	addge	r0, #9
 
 	/* Turn on the GPIO pin specified */
 	mov	r2, #1
@@ -68,16 +69,17 @@ light_led_group:
 	/* Commit */
 	str	r2, [r1]
 
-	ret
+	bx	lr
 
 turn_off_led_group:
-	movlt	r1, 0x20200004, r0, #3
-	movgt	r1, 0x20200020, r0, #2
+	cmp	r0, #3
+	ldrlt	r1, =0x20200004
+	ldrge	r1, =0x20200020
 
 	mov	r2, #0
 	str	r2, [r1]
 
-	ret
+	bx	lr
 
 wait:
 	/* Stole this from baking pi: https://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/ok02.html */
@@ -86,4 +88,4 @@ wait:
 	cmp	r2, #0
 	bne	wait
 
-	ret
+	bx	lr
